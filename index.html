@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Train Station</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/style.css">
+    <!-- <script type="text/javascript" src="assets/app.js"></script> -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+</head>
+
+<body>
+    <!-- Jumbotron Title -->
+    <div class="jumbotron">
+        <h1 class="text-center">Anytime is Train Time</h1>
+        <h3 class="text-center">"Choo Choo.Chee Chee"</h3>
+    </div>
+
+
+    <!-- Train Schedule Panel -->
+    <div class="panel panel-default">
+        <div class="panel-heading panel">
+            Current Train Schedule
+        </div>
+        <table class="table table-hover">
+            <tr>
+                <th scope="col">Train Name</th>
+                <th scope="col">Destination</th>
+                <th scope="col">Frequency (min)</th>
+                <th scrope="col">Minutes Away</th>
+                <th scope="col">Next Arrival</th>
+            </tr>
+            <tbody id="table-data"></tbody>
+        </table>
+    </div>
+
+    </div>
+
+
+    <div class="panel-body">
+        <form>
+            <div class="form-group">
+                <label for="train-name">Train Name</label>
+                <input class="form-control" id="train-name" type="text">
+            </div>
+            <div class="form-group">
+                <label for="train-destination">Destination</label>
+                <input class="form-control" id="train-destination" type="text">
+            </div>
+            <div class="form-group">
+                <label for="train-time">First Train Time (HH-mm - military time)</label>
+                <input class="form-control" id="train-time" type="text">
+            </div>
+            <div class="form-group">
+                <label for="train-frequency">Frequency (min)</label>
+                <input class="form-control" id="train-frequency" type="text">
+            </div>
+
+
+
+            <button class="btn btn-primary" id="submit-bid" type="submit">Submit</button>
+        </form>
+    </div>
+    </div>
+    </div>
+
+
+    <!-- Script -->
+    <script>
+
+        // Firebase Key (The button on click isn't capturing the info)
+        var config = {
+            apiKey: "AIzaSyDGyGAMHUywBZAc4WaUFi7Clp3Jf3D5xj0",
+            authDomain: "train-station-77004.firebaseapp.com",
+            databaseURL: "https://train-station-77004.firebaseio.com",
+            projectId: "train-station-77004",
+            storageBucket: "train-station-77004.appspot.com",
+            messagingSenderId: "682775648316"
+        };
+        firebase.initializeApp(config);
+
+        var dataRef = firebase.database();
+
+        // First Values
+        var trainName = "";
+        var destination = "";
+        var firstTime = 0;
+        var frequency = 0;
+
+        // Capture the Button when sumbited
+        $("#add-train").on("click", function (event) {
+            event.preventDefault();
+
+            trainName = $("#trainName-input").val().trim();
+            destination = $("#destination-input").val().trim();
+            firstTime = $("#firstTime-input").val().trim();
+            frequency = $("#frequency-input").val().trim();
+
+            // Code for the push
+            dataRef.ref().push({
+
+                trainName: trainName,
+                destination: destination,
+                firstTime: firstTime,
+                frequency: frequency,
+                dateAdded: firebase.database.ServerValue.TIMESTAMP
+            });
+        });
+
+
+        dataRef.ref().on("child_added", function (childSnapshot) {
+
+            // Log everything that's put into HTML
+            console.log(childSnapshot.val().trainName);
+            console.log(childSnapshot.val().destination);
+            console.log(childSnapshot.val().firstTime);
+            console.log(childSnapshot.val().frequency);
+
+            // full list of items
+            $("#table-data").append(
+                "<tr><td>" + snapshot.val().name + "</td>" +
+                "<td>" + snapshot.val().destination + "</td>" +
+                "<td>" + frequency + "</td>"
+            );
+
+            dataRef.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function (snapshot) {
+
+                // Change the HTML to reflect the new schedule
+                $("#trainName-display").text(snapshot.val().trainName);
+                $("destination-display").text(snapshot.val().destination);
+                $("#firstTime-display").text(snapshot.val().firstTime);
+                $("#frequency-display").text(snapshot.val().frequency);
+
+
+     // Ive been trying to figure out the cause of this for weeks and I still cant get it to run
+     //Couldn't get JS Chart to work with the Military time
+
+    </script>
+</body>
+
+</html>
